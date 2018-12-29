@@ -1,4 +1,6 @@
 #!/bin/bash
+set -ex
+
 apt install curl git
 
 SUDO_USER_HOME=$(eval echo ~$SUDO_USER)
