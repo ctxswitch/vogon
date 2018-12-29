@@ -1,0 +1,10 @@
+{
+    "run_list": [
+        "recipe[vogon::system]",
+        "recipe[vogon::vscode]",
+        "recipe[vogon::docker]",
+        "recipe[vogon::devel]",
+        "recipe[vogon::chrome]",
+        "recipe[vogon::insync]"
+    ]
+}
