@@ -1,0 +1,10 @@
+{
+    "run_list": [
+        "recipe[chef_workstation::system]",
+        "recipe[chef_workstation::vscode]",
+        "recipe[chef_workstation::docker]",
+        "recipe[chef_workstation::devel]",
+        "recipe[chef_workstation::chrome]",
+        "recipe[chef_workstation::insync]"
+    ]
+}
