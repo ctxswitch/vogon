@@ -10,6 +10,7 @@ bash 'extract_and_move' do
     chmod 0755 terraform
     mv terraform /usr/local/bin/terraform
   EOB
+  action :nothing
 end
 
 remote_file '/tmp/terraform.zip' do
@@ -17,6 +18,5 @@ remote_file '/tmp/terraform.zip' do
   owner 'root'
   group 'root'
   action :create_if_missing
-  not_if File.exist?('/usr/local/bin/terraform')
   notifies :run, 'bash[extract_and_move]', :immediately
 end
