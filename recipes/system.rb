@@ -1,8 +1,10 @@
-systemd_unit ['sleep.target', 'suspend.target', 'hibernate.target', 'hybrid-sleep.target'] do
+# Handle linux systems that have issues with suspend
+unless node['system']['options']['suspend_capable']
+  systemd_unit ['sleep.target', 'suspend.target', 'hibernate.target', 'hybrid-sleep.target'] do
     action :mask
-end
+  end
 
-systemd_unit 'root-resume.service' do
+  systemd_unit 'root-resume.service' do
     content <<-EOU.gsub(/^\s+/, '')
     [Unit]
     Description=Local system resume actions
@@ -16,14 +18,9 @@ systemd_unit 'root-resume.service' do
     WantedBy=suspend.target
     EOU
     action [:create, :enable]
-end
+  end
 
-# Packages to big list
-package ['tlp', 'thermald'] do
-    action :install
-end
-
-file '/etc/systemd/logind.conf' do
+  file '/etc/systemd/logind.conf' do
     content <<-EOU.gsub(/^\s+/, '')
     # Managed by Chef
     [Login]
@@ -34,23 +31,28 @@ file '/etc/systemd/logind.conf' do
     group 'root'
     mode '0644'
     action :create
+  end
 end
 
-# Device to node variable
-mount '/' do
-    device '62d9efc4-e9a7-4820-b7aa-a0f1bcf2228d'
+node['system']['ssd_devices'].each do |dv|
+  mount '/' do
+    device dv
     device_type :uuid
     fstype 'ext4'
     dump 0
     pass 1
     options 'discard,noatime,errors=remount-ro'
     action [:mount, :enable]
+  end
 end
 
+if node['system']['options']['vm_tools']
+  package 'open-vm-tools' do
+    action :install
+  end
+end
 
-
-
-# systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-# sh -c 'echo -e "[Login]\nHandleLidSwitch=ignore\nHandleLidSwitchDocked=ignore" >> /etc/systemd/logind.conf'
-# apt-get install tlp thermald -y
-# sed -i -e 's/errors=remount-ro 0/discard,noatime,errors=remount-ro 0/g' /etc/fstab
+# Packages to big list
+package ['tlp', 'thermald'] do
+  action :install
+end
