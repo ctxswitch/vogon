@@ -1,0 +1,1 @@
+default['vogon']['user'] = ENV['SUDO_USER']
