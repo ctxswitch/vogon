@@ -21,3 +21,11 @@ node['vscode']['extensions'].each do |ext|
     action :install
   end
 end
+
+template "/home/#{node['vogon']['user']}/.config/Code/User/settings.json" do
+  source 'vscode/settings.json.erb'
+  owner node['vogon']['user']
+  group node['vogon']['group']
+  mode '0644'
+  action :create
+end
