@@ -1,6 +1,6 @@
 apt_repository 'google-chrome' do
-  uri 'http://dl.google.com/linux/chrome/deb/'
-  key 'https://dl.google.com/linux/linux_signing_key.pub'
+  uri node['chrome']['upstream_repo']
+  key node['chrome']['signing_key']
   distribution 'stable'
   components ['main']
   action :add
