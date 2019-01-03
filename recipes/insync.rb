@@ -1,7 +1,7 @@
 apt_repository 'insync' do
-  uri 'http://apt.insynchq.com/debian'
-  key 'https://d2t3ff60b2tol4.cloudfront.net/services@insynchq.com.gpg.key'
-  distribution 'stretch'
+  uri node['insync']['upstream_repo']
+  key node['insync']['signing_key']
+  distribution node['lsb']['codename']
   components ['non-free', 'contrib']
   action :add
 end
