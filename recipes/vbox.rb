@@ -1,7 +1,12 @@
+package "linux-headers-#{node['kernel']['release']}"
+package %w(gcc make dkms) do
+  action :install
+end
+
 apt_repository 'virtualbox' do
-  uri 'http://download.virtualbox.org/virtualbox/debian'
-  key 'https://www.virtualbox.org/download/oracle_vbox_2016.asc'
-  distribution 'stretch'
+  uri node['vbox']['upstream_repo']
+  key node['vbox']['signing_key']
+  distribution node['lsb']['codename']
   components ['contrib']
   action :add
 end
