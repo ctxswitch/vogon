@@ -3,8 +3,8 @@ package ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2', 'software-p
 end
 
 apt_repository 'docker' do
-  uri 'https://download.docker.com/linux/debian'
-  key 'https://download.docker.com/linux/debian/gpg'
+  uri node['docker']['upstream_repo']
+  key node['docker']['signing_key']
   arch 'amd64'
   components ['stable']
   action :add
