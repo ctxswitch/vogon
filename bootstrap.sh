@@ -82,3 +82,5 @@ if ! [[ -f ${SUDO_USER_HOME}/chef/vogon/client.json ]] ; then
 }
 EOF
 fi
+
+chown -R ${SUDO_USER}:${SUDO_USER} ${SUDO_USER_HOME}/chef
