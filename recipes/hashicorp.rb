@@ -1,4 +1,20 @@
-package ['vagrant', 'packer'] do
+# package ['vagrant', 'packer'] do
+#   action :install
+# end
+
+directory '/usr/local/pkgs' do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
+end
+
+remote_file '/usr/local/pkgs/vagrant_2.2.2_x86_64.deb' do
+  source 'https://releases.hashicorp.com/vagrant/2.2.2/vagrant_2.2.2_x86_64.deb'
+end
+
+dpkg_package 'vagrant_2.2.2_x86_64.deb' do
+  source '/usr/local/pkgs/vagrant_2.2.2_x86_64.deb'
   action :install
 end
 
@@ -19,5 +35,25 @@ remote_file '/tmp/terraform.zip' do
   group 'root'
   action :create_if_missing
   not_if { ::File.exist?('/usr/local/bin/terraform') }
+  notifies :run, 'bash[extract_and_move]', :immediately
+end
+
+pk_version = node['hashicorp']['packer']['version']
+bash 'extract_and_move' do
+  cwd '/tmp'
+  code <<-EOB
+    unzip packer.zip
+    chmod 0755 packer
+    mv packer /usr/local/bin/packer
+  EOB
+  action :nothing
+end
+
+remote_file '/tmp/packer.zip' do
+  source "https://releases.hashicorp.com/packer/#{pk_version}/packer_#{pk_version}_linux_amd64.zip"
+  owner 'root'
+  group 'root'
+  action :create_if_missing
+  not_if { ::File.exist?('/usr/local/bin/packer') }
   notifies :run, 'bash[extract_and_move]', :immediately
 end
