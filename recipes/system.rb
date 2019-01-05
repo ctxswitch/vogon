@@ -51,8 +51,3 @@ if node['system']['options']['vm_tools']
     action :install
   end
 end
-
-# Packages to big list
-package ['tlp', 'thermald'] do
-  action :install
-end
