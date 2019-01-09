@@ -19,7 +19,7 @@ dpkg_package 'vagrant_2.2.2_x86_64.deb' do
 end
 
 tf_version = node['hashicorp']['terraform']['version']
-bash 'extract_and_move' do
+bash 'extract_and_move_terraform' do
   cwd '/tmp'
   code <<-EOB
     unzip terraform.zip
@@ -35,11 +35,11 @@ remote_file '/tmp/terraform.zip' do
   group 'root'
   action :create_if_missing
   not_if { ::File.exist?('/usr/local/bin/terraform') }
-  notifies :run, 'bash[extract_and_move]', :immediately
+  notifies :run, 'bash[extract_and_move_terraform]', :immediately
 end
 
 pk_version = node['hashicorp']['packer']['version']
-bash 'extract_and_move' do
+bash 'extract_and_move_packer' do
   cwd '/tmp'
   code <<-EOB
     unzip packer.zip
@@ -55,5 +55,5 @@ remote_file '/tmp/packer.zip' do
   group 'root'
   action :create_if_missing
   not_if { ::File.exist?('/usr/local/bin/packer') }
-  notifies :run, 'bash[extract_and_move]', :immediately
+  notifies :run, 'bash[extract_and_move_packer]', :immediately
 end

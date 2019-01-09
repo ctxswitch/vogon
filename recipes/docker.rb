@@ -13,3 +13,8 @@ end
 package 'docker-ce' do
   action :install
 end
+
+group 'docker' do
+  members ENV['SUDO_USER']
+  action :create
+end
