@@ -1,37 +1,52 @@
 # Handle linux systems that have issues with suspend
-unless node['system']['options']['suspend_capable']
-  systemd_unit ['sleep.target', 'suspend.target', 'hibernate.target', 'hybrid-sleep.target'] do
-    action :mask
-  end
+# unless node['system']['options']['suspend_capable']
+#   systemd_unit ['sleep.target', 'suspend.target', 'hibernate.target', 'hybrid-sleep.target'] do
+#     action :mask
+#   end
 
-  systemd_unit 'root-resume.service' do
-    content <<-EOU.gsub(/^\s+/, '')
-    [Unit]
-    Description=Local system resume actions
-    After=suspend.target
+#   systemd_unit 'root-resume.service' do
+#     content <<-EOU.gsub(/^\s+/, '')
+#     [Unit]
+#     Description=Local system resume actions
+#     After=suspend.target
 
-    [Service]
-    Type=simple
-    ExecStart=/bin/systemctl restart NetworkManager.service
+#     [Service]
+#     Type=simple
+#     ExecStart=/bin/systemctl restart NetworkManager.service
 
-    [Install]
-    WantedBy=suspend.target
-    EOU
-    action [:create, :enable]
-  end
+#     [Install]
+#     WantedBy=suspend.target
+#     EOU
+#     action [:create, :enable]
+#   end
 
-  file '/etc/systemd/logind.conf' do
-    content <<-EOU.gsub(/^\s+/, '')
-    # Managed by Chef
-    [Login]
-    HandleLidSwitch=ignore
-    HandleLidSwitchDocked=ignore
-    EOU
-    owner 'root'
-    group 'root'
-    mode '0644'
-    action :create
-  end
+#   file '/etc/systemd/logind.conf' do
+#     content <<-EOU.gsub(/^\s+/, '')
+#     # Managed by Chef
+#     [Login]
+#     HandleSuspendKey=suspend
+#     HandleLidSwitch=suspend
+#     HandleLidSwitchDocked=suspend
+#     EOU
+#     owner 'root'
+#     group 'root'
+#     mode '0644'
+#     action :create
+#   end
+# end
+
+file '/etc/systemd/logind.conf' do
+  content <<-EOU.gsub(/^\s+/, '')
+  # Managed by Chef
+  [Login]
+  HandleSuspendKey=suspend
+  HandleLidSwitch=suspend
+  HandleLidSwitchDocked=suspend
+  EOU
+  owner 'root'
+  group 'root'
+  mode '0644'
+  action :create
 end
 
 node['system']['ssd_devices'].each do |dv|
